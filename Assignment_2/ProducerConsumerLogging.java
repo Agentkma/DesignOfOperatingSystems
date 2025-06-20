@@ -7,10 +7,10 @@ import java.util.concurrent.*;
 //shutdown hook  will be triggered when the application receives a SIGINT (Ctrl+C)
 
 public class ProducerConsumerLogging {
-    // Shared buffer
+
     private static final int BUFFER_CAPACITY = 100;
     private static final BlockingQueue<String> logQueue = new LinkedBlockingQueue<>(BUFFER_CAPACITY);
-    // The log file
+
     private static final String LOG_FILE_PATH = "/Users/Kevin/Code/Design of Operating Systems/Assignment_2/system_logs.txt";
 
     // Assignment_2/system_logs.txt
@@ -27,11 +27,10 @@ public class ProducerConsumerLogging {
                 System.err.println("Shutdown initiated. Logs flushed.");
             }));
         } finally {
-            executor.close();
+            executor.shutdown();
         }
     }
 
-    // Producer: creates log entries
     static class LogProducer implements Runnable {
         @Override
         public void run() {
@@ -51,10 +50,10 @@ public class ProducerConsumerLogging {
         }
     }
 
-    // Consumer: writes log entries to a file
     static class LogConsumer implements Runnable {
         @Override
         public void run() {
+
             try (BufferedWriter writer = new BufferedWriter(new FileWriter(LOG_FILE_PATH, true))) {
                 while (!Thread.currentThread().isInterrupted()) {
                     String log = logQueue.take(); // blocks if queue is empty
@@ -71,3 +70,12 @@ public class ProducerConsumerLogging {
         }
     }
 }
+
+/*
+ * What are the components of OS? The OS is made up of the kernel and system
+ * programs. The OS provides services via system calls, command line
+ * interpreter, and gui interfaces
+ * Why are system calls in OS? To complete some operation that the operating
+ * system controls. To provide an interface to the services made available by an
+ * operating system.
+ */
