@@ -1,3 +1,4 @@
+package QuestionOne;
 class Foo {
     private boolean firstDone = false; // variable to track if first() has been called
     private boolean secondDone = false; // variable to track if second() has been called
@@ -19,7 +20,7 @@ class Foo {
 
     public void second(Runnable printSecond) throws InterruptedException {
         synchronized (lock) {// Acquire the lock to ensure exclusive access, thread will wait until the lock is released and then acquire
-            while (!firstDone) // check if first() has been called
+            while (!firstDone){ // check if first() has been called
                 lock.wait();// wait until first() has been called
             }// this while loop will continue unit firstDone is true
             
@@ -28,7 +29,8 @@ class Foo {
             secondDone = true;// mark that the second method has completed
             lock.notifyAll();// Notify any waiting threads that they can proceed to try to acquire lock
         }
-    }
+        }
+    
 
     public void third(Runnable printThird) throws InterruptedException {
         synchronized (lock) {
@@ -78,9 +80,9 @@ class FooTest {
         //The threads themselves may run in parallel (or concurrently),
         // meaning their execution overlaps in time, and you cannot predict the order 
         // in which their code will run unless you synchronize them which we do in Foo class.
+        threadA.start(); // Start threadA (calls foo.first()), thread begins execution in parallel
         threadC.start(); // Start threadC (calls foo.third()), thread begins execution in parallel
         threadB.start(); // Start threadB (calls foo.second()), thread begins execution in parallel
-        threadA.start(); // Start threadA (calls foo.first()), thread begins execution in parallel
         // If the current thread (the one calling join()) is interrupted while waiting for threadA to finish, 
         //an InterruptedException is thrown and we must handle it.
         try {
